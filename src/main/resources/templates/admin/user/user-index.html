@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{/layout/layout-admin :: main-fragment(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{})}">
+
+<head>
+    <title>Tất cả user</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách user
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a th:href="@{/admin/users/create}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tạo user
+                    </a>
+                    <a th:href="@{/admin/users}" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên</th>
+                                    <th>Email</th>
+                                    <th>Roles</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <th:block th:with="userList = ${page.getContent()}">
+                                    <tr th:each="user, state : ${userList}">
+                                        <td th:text="${(currentPage - 1) * page.getSize() + (state.index + 1)}">1</td>
+                                        <td>
+                                            <a th:href="@{/admin/users/{id} (id=${user.id})}"
+                                               th:text="${user.name}">Nguyen Van A</a>
+                                        </td>
+                                        <td th:text="${user.email}">a@gmail.com</td>
+                                        <td>
+                                            <span th:each="role : ${user.roles}" class="badge bg-info mr-1" th:text="${role.name}"></span>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+                                <ul class="pagination mb-0">
+                                    <li class="paginate_button page-item previous" th:classappend="${currentPage == 1 ? 'disabled' : ''}"
+                                        id="example2_previous">
+                                        <a th:href="@{/admin/users?page={pageNumber} (pageNumber=${currentPage-1})}" aria-controls="example2" data-dt-idx="0" tabindex="0"
+                                           class="page-link">Previous</a>
+                                    </li>
+                                    <th:block th:with="numbers = ${T(com.example.blog.utils.Utils).createList(page.getTotalPages())}">
+                                        <li th:each="number : ${numbers}" class="paginate_button page-item" th:classappend="${number == currentPage ? 'active' : ''}">
+                                            <a th:href="@{/admin/users?page={pageNumber} (pageNumber=${number})}" aria-controls="example2" data-dt-idx="1" tabindex="0"
+                                               class="page-link" th:text="${number}">1</a>
+                                        </li>
+                                    </th:block>
+                                    <li class="paginate_button page-item next" th:classappend="${currentPage == page.getTotalPages() ? 'disabled' : ''}"
+                                        id="example2_next">
+                                        <a th:href="@{/admin/users?page={pageNumber} (pageNumber=${currentPage+1})}" aria-controls="example2" data-dt-idx="7" tabindex="0"
+                                           class="page-link">Next</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+
+</html>

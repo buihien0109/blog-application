@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: main-fragment(~{:: title}, ~{}, ~{:: main}, ~{:: #javascript})}">
+<head>
+    <title>Search | Kong's Blog</title>
+</head>
+
+<body class="list" id="top">
+<main class="main">
+    <header class="page-header">
+        <h1>
+            Search
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentcolor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </h1>
+        <div class="post-description">Tìm kiếm bài viết</div>
+        <div class="post-meta"></div>
+    </header>
+    <div id="searchbox">
+        <input
+                id="searchInput"
+                autofocus
+                placeholder="Tìm kiếm bài viết"
+                type="search"
+                autocomplete="off"
+                required
+        />
+        <ul id="searchResults">
+
+        </ul>
+    </div>
+</main>
+
+<th:block id="javascript">
+    <script th:inline="javascript">
+        const searchInputEl = document.getElementById("searchInput");
+        const searchResultsEl = document.getElementById("searchResults");
+
+        const renderSearchResult = (blogList) => {
+            searchResultsEl.innerHTML = "";
+            let html = "";
+            blogList.forEach(blog => {
+                html += `
+                    <li class="post-entry">
+                        <header class="entry-header">
+                            ${blog.title}
+                        </header>
+                        <a
+                            href="/blogs/${blog.id}/${blog.slug}"
+                            aria-label=" ${blog.title}"
+                        ></a>
+                    </li>
+                        `
+            })
+            searchResultsEl.innerHTML = html;
+        }
+
+        searchInputEl.addEventListener("keydown", async (e) => {
+            if (e.key == "Enter") {
+                const searchTerm = e.target.value;
+                if (searchTerm.trim().length == 0) {
+                    alert("Từ khóa không được để trống");
+                    return;
+                }
+                let res = await fetch(`/api/v1/public/blogs/search?term=${searchTerm}`)
+                let resJson = await res.json();
+                renderSearchResult(resJson);
+            }
+        })
+    </script>
+</th:block>
+
+</body>
+</html>
